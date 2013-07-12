@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Gistfy Demo</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="">
+<meta name="author" content="">
+
+<!-- Le styles -->
+<link href="assets/css/bootstrap.css" rel="stylesheet">
+<style type="text/css">
+body {
+    padding-top: 60px;
+    padding-bottom: 40px;
+}
+/*loader*/
+.loader {
+    text-align: center;    
+}
+.loader span {
+    display: inline-block;
+    vertical-align: middle;
+    width: 10px;
+    height: 10px;
+    margin: 50px auto;
+    background: black;
+    border-radius: 50px;
+    -webkit-animation: loader 0.9s infinite alternate;
+    -moz-animation: loader 0.9s infinite alternate;
+}
+.loader span:nth-of-type(2) {
+    -webkit-animation-delay: 0.3s;
+    -moz-animation-delay: 0.3s;
+}
+.loader span:nth-of-type(3) {
+    -webkit-animation-delay: 0.6s;
+    -moz-animation-delay: 0.6s;
+}
+@-webkit-keyframes loader {
+  0% {
+    width: 10px;
+    height: 10px;
+    opacity: 0.9;
+    -webkit-transform: translateY(0);
+  }
+  100% {
+    width: 24px;
+    height: 24px;
+    opacity: 0.1;
+    -webkit-transform: translateY(-21px);
+  }
+}
+@-moz-keyframes loader {
+  0% {
+    width: 10px;
+    height: 10px;
+    opacity: 0.9;
+    -moz-transform: translateY(0);
+  }
+  100% {
+    width: 24px;
+    height: 24px;
+    opacity: 0.1;
+    -moz-transform: translateY(-21px);
+  }
+}
+</style>
+<link href="assets/css/bootstrap-responsive.css" rel="stylesheet">
+
+<!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+<!--[if lt IE 9]>
+      <script src="assets/js/html5shiv.js"></script>
+    <![endif]-->
+
+<!-- Fav and touch icons -->
+<link rel="apple-touch-icon-precomposed" sizes="144x144"
+    href="assets/ico/apple-touch-icon-144-precomposed.png">
+<link rel="apple-touch-icon-precomposed" sizes="114x114"
+    href="assets/ico/apple-touch-icon-114-precomposed.png">
+<link rel="apple-touch-icon-precomposed" sizes="72x72"
+    href="assets/ico/apple-touch-icon-72-precomposed.png">
+<link rel="apple-touch-icon-precomposed"
+    href="assets/ico/apple-touch-icon-57-precomposed.png">
+<link rel="shortcut icon" href="assets/ico/favicon.png">
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js" type="text/javascript"></script>
+    <script type="text/javascript">
+$(document).ready(function(){
+  $(':submit').live('click', function() { // This event fires when a button is clicked
+      var button = $(this).val();
+      if (button == 'read') { // If clicked buttons value.
+          var mydata = { url: $('#url').val(), size: $('#size').val(), button: 'read' };
+      }
+      else if (button == 'tread'){
+    	  var mydata = { new_message: $('#new_message').val(), size: $('#tsize').val(), button: 'tread' };
+      }
+      $.ajax({ // ajax call starts
+          url: 'serverside.php', // JQuery loads serverside.php
+          data: mydata,
+          dataType: 'json', // Choosing a JSON datatype
+          beforeSend:function(){
+              // this is where we append a loading image
+              jQuery('#gist').html('<div class="loader"><span></span><span></span><span></span></div>');
+          },
+          success: function(data) // Variable data contains the data we get from serverside
+          {
+              $('#gist').html(''); // Clear #wines div
+              $('#footer-gist').empty();
+              document.title = 'new title';
+              if (button == 'read') { // If clicked buttons value.
+                      $('#gist').append('<h3>' + data.title + '</h3><p>'+ data.gist +'</p><p><a href="'+ data.url +'" target="_blank" class="btn btn-primary btn-large">Read more &raquo;</a></p>');
+                      $('#footer-gist').append('<p>&copy; Company 2013 | This page took '+data.totaltime+' seconds to create this summary of ' + data.count + ' Words. <!--Compresion to ' + data.percent + '%. --></p>');
+                      document.title =  'Gist > '+data.title;
+              }
+              else if (button == 'tread') { // If clicked buttons value.
+                  $('#gist').append('<h3>Summary:</h3><p>'+ data.gist +'</p>');
+                  $('#footer-gist').append('<p>&copy; Company 2013 | This page took '+data.totaltime+' seconds to create this summary of ' + data.count + ' Words. <!--Compresion to ' + data.percent + '%.--></p>');
+                  document.title =  'Gist';
+          }
+
+          },
+          error:function(){
+              // failed request; give feedback to user
+              jQuery('#gist').html('<p class="error"><strong>Oops!</strong> Try that again in a few moments.</p>');
+              $('#footer-gist').html('<p>&copy; Company 2013');
+          }
+      });
+      return false; // keeps the page from not refreshing 
+  });
+});
+</script>
+</head>
+
+<body>
+
+    <div class="navbar navbar-inverse navbar-fixed-top">
+        <div class="navbar-inner">
+            <div class="container">
+                <button type="button" class="btn btn-navbar" data-toggle="collapse"
+                    data-target=".nav-collapse">
+                    <span class="icon-bar"></span> <span class="icon-bar"></span> <span
+                        class="icon-bar"></span>
+                </button>
+                <a class="brand" href="#">Gistfy</a>
+                <div class="nav-collapse collapse">
+                    <!--<ul class="nav">
+                        <li class="active"><a href="#">Home</a></li>
+                         <li><a href="#about">About</a></li>
+                        <li><a href="#contact">Contact</a></li>
+                        <li class="dropdown"><a href="#" class="dropdown-toggle"
+                            data-toggle="dropdown">Dropdown <b class="caret"></b></a>
+                            <ul class="dropdown-menu">
+                                <li><a href="#">Action</a></li>
+                                <li><a href="#">Another action</a></li>
+                                <li><a href="#">Something else here</a></li>
+                                <li class="divider"></li>
+                                <li class="nav-header">Nav header</li>
+                                <li><a href="#">Separated link</a></li>
+                                <li><a href="#">One more separated link</a></li>
+                            </ul></li> 
+                    </ul>-->
+                    <form class="navbar-form pull-right" action="" method="post">
+                        <input class="span4" type="text" id="url" placeholder="URL" name="url">
+                        <input class="span2" type="text" id="size" placeholder="Summary Length"
+                            name="size">
+                        <button type="submit" class="btn" value='read'>Read</button>
+                    </form>
+                </div>
+                <!--/.nav-collapse -->
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+
+        <!-- Main hero unit for a primary marketing message or call to action -->
+       
+        <div class="row" >
+         <div class="span4 well">
+    <form accept-charset="UTF-8" action="" method="POST">
+        <textarea class="span4" id="new_message" id="new_message" name="new_message"
+        placeholder="Type in your message" rows="5"></textarea>
+        <input class="span4" type="text" id="tsize" placeholder="Summary Length"
+                            name="tsize">
+        <!-- <h6 class="pull-right">320 characters remaining</h6> -->
+        <button class="btn btn-info" type="submit" value="tread">Read</button>
+    </form>
+</div>
+<div id="gist" class="span6">
+        <h1>Gistfy</h1>
+        <p>A simple PHP class for summarizing text e.g. for automatically determining the sentences that are most relevant to the context of the corpus.</p>
+        <p>
+		<ul>
+		    <li>Ranking sentences by importance using the core algorithm.</li>
+			<li>Reorganizing the summary to focus on a topic; by selection of a keyword.</li>
+			<li>Use both TextRank and LexRank</li>
+		</ul>
+		</p>
+		<p>The core algorithm works by these simplified steps:</p>
+		<ol> 
+		<li>Associate words with their grammatical counterparts. (e.g. "city" and "cities")</li>
+		<li>Calculate the occurrence of each word in the text.</li>
+		<li>Assign each word with points depending on their popularity.</li>
+		<li>Detect which periods represent the end of a sentence. (e.g "Mr." does not).</li>
+		<li>Split up the text into individual sentences.</li>
+		<li>Rank sentences by the sum of their words' points. and LexRank ponis</li>
+		<li>Return X of the most highly ranked sentences in chronological order.</li>
+        </ol>
+        </p>
+        </div>
+        </div>
+        <hr>
+
+        <footer id='footer-gist'>
+            <p>&copy; Company 2013</p>
+        </footer>
+
+    </div>
+    <!-- /container -->
+
+    <!-- Le javascript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <!-- <script src="assets/js/jquery.js"></script> -->
+   <!--  <script src="assets/js/the-perfect-ajax.js"></script> -->
+    <script src="assets/js/bootstrap-transition.js"></script>
+    <script src="assets/js/bootstrap-alert.js"></script>
+    <script src="assets/js/bootstrap-modal.js"></script>
+    <script src="assets/js/bootstrap-dropdown.js"></script>
+    <script src="assets/js/bootstrap-scrollspy.js"></script>
+    <script src="assets/js/bootstrap-tab.js"></script>
+    <script src="assets/js/bootstrap-tooltip.js"></script>
+    <script src="assets/js/bootstrap-popover.js"></script>
+    <script src="assets/js/bootstrap-button.js"></script>
+    <script src="assets/js/bootstrap-collapse.js"></script>
+    <script src="assets/js/bootstrap-carousel.js"></script>
+    <script src="assets/js/bootstrap-typeahead.js"></script>
+
+
+
+</body>
+</html>
